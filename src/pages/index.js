@@ -3,8 +3,7 @@ import {Button, Card, Container, Grid} from 'semantic-ui-react';
 export default function HomePage({tasks}) {
   if (tasks.length === 0)
     return(
-      <Grid centered verticalAlign="middle" columns="1" style={{height: "80vh"}}
-      >
+      <Grid centered verticalAlign="middle" columns="1" style={{height: "80vh"}}>
         <Grid.Row>
           <Grid.Column textAlign="center">
             <h1>There are no tasks yet</h1>
