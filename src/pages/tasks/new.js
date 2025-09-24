@@ -1,5 +1,6 @@
 import { Form, Grid, Button} from 'semantic-ui-react';
 import {useState} from 'react';
+import { useRouter } from 'next/router';
 
 export default function TaskFormPage() {
   const [newTask, setNewTask] = useState({title: "", description:  ""});
@@ -8,6 +9,8 @@ export default function TaskFormPage() {
     title: "",
     description: "",
   });
+
+  const router = useRouter();
 
   const validate = () => {
     const errors = {};
@@ -25,15 +28,15 @@ export default function TaskFormPage() {
     if (Object.keys(errors).length) return setErrors(errors);
 
     await createTask();
+    await router.push('/');
   };
-
 
     const createTask = async () => {
       try {
         await fetch("http://localhost:3000/api/tasks", {
           method: "POST",
           headers: {
-            "content-type": "aplication/json"
+            "content-type": "application/json"
           },
           body: JSON.stringify(newTask)
         })
