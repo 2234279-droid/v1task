@@ -1,16 +1,18 @@
 import { Form, Grid, Button} from 'semantic-ui-react';
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 export default function TaskFormPage() {
-  const [newTask, setNewTask] = useState({title: "", description:  ""});
+  const [newTask, setNewTask] = useState({
+    title: "",
+    description:  ""});
 
   const [errors, setErrors] = useState({
     title: "",
     description: "",
   });
 
-  const router = useRouter();
+  const {query, push} = useRouter();
 
   const validate = () => {
     const errors = {};
@@ -28,7 +30,7 @@ export default function TaskFormPage() {
     if (Object.keys(errors).length) return setErrors(errors);
 
     await createTask();
-    await router.push('/');
+    await push('/');
   };
 
     const createTask = async () => {
@@ -39,17 +41,30 @@ export default function TaskFormPage() {
             "content-type": "application/json"
           },
           body: JSON.stringify(newTask)
-        })
+        });
       } catch (error) {
-        console.log(error);
+          console.error(error);
       }
-  }
+  };
 
-  const handleChange = (e) => setNewTask({...newTask, [e.target.name]: e.target.value});
+const handleChange = (e) => setNewTask({...newTask, [e.target.name]: e.target.value});
+
+const getTask = async () => { 
+  const res = await fetch("http://localhost:3000/api/tasks/" + query.id);
+  const data = await res.json();
+  console.log(data);
+};
+
+useEffect(() => {
+    if (query.id) getTask();
+    }, []); 
 
   return (
-    <Grid centered verticalAlign="middle" columns="3" style={{height: "80vh"}}>
-      <Grid.Row>
+    <Grid
+    centered verticalAlign="middle"
+    columns="3"
+    style={{height: "80vh"}}>
+      <Grid.Row> 
         <Grid.Column textAlign="center">
           <h1>Create Task</h1>
           <Form onSubmit={handleSubmit}>
