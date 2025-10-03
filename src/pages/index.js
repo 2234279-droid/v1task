@@ -29,7 +29,7 @@ export default function HomePage({tasks}) {
             </Card.Content>
             <Card.Content extra>
               <Button primary onClick={() => router.push(`/tasks/${task._id}`)}>View</Button>
-              <Button secundary onClick={() => router.push(`/task/${task._id}/edit`)}>Edit Task</Button>
+              <Button secundary onClick={() => router.push(`/tasks/${task._id}/edit`)}>Edit Task</Button>
             </Card.Content>
           </Card>
         ))}

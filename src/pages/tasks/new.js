@@ -29,14 +29,33 @@ export default function TaskFormPage() {
 
     if (Object.keys(errors).length) return setErrors(errors);
 
-    await createTask();
+    if (query.id) {
+      await updateTask();
+    }else {
+      await createTask();
+    }
+
     await push('/');
   };
 
-    const createTask = async () => {
+  const createTask = async () => {
       try {
         await fetch("http://localhost:3000/api/tasks", {
           method: "POST",
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(newTask)
+        });
+      } catch (error) {
+          console.error(error);
+      }
+   };
+
+   const updateTask = async () => {
+      try {
+        await fetch("http://localhost:3000/api/tasks/" + query.id, {
+          method: "PUT",
           headers: {
             "content-type": "application/json"
           },
@@ -52,7 +71,7 @@ const handleChange = (e) => setNewTask({...newTask, [e.target.name]: e.target.va
 const getTask = async () => { 
   const res = await fetch("http://localhost:3000/api/tasks/" + query.id);
   const data = await res.json();
-  console.log(data);
+  setNewTask({title: data.title, description: data.description});
 };
 
 useEffect(() => {
@@ -66,7 +85,7 @@ useEffect(() => {
     style={{height: "80vh"}}>
       <Grid.Row> 
         <Grid.Column textAlign="center">
-          <h1>Create Task</h1>
+          <h1>{query.id ? "Upadate Task" : "Create Task"}</h1>
           <Form onSubmit={handleSubmit}>
             <Form.Input
             label="Title"
@@ -74,6 +93,7 @@ useEffect(() => {
             name="title"
             onChange={handleChange}
             error = {errors.title ? {content: errors.title, pointing: "below"} : null }
+            value = {newTask.title}
             />
             <Form.TextArea
             label="Description"
@@ -81,8 +101,9 @@ useEffect(() => {
             name="description"
             onChange={handleChange}
             error = {errors.description ? {content: errors.description, pointing: "below"} : null }
+            value = {newTask.description}
             />
-            <Button>Save</Button>
+            <Button>{query.id ? "Update" : "Create"}</Button>
           </Form>
         </Grid.Column>
       </Grid.Row>
